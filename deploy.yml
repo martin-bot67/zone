@@ -1,0 +1,38 @@
+name: Deploy to githubdeploy.wrongs.eu
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Build and Sync
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Uncomment if using a build framework (React, Vue, Next, Vite, etc.)
+      # - name: Setup Node.js
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: '20'
+      # - name: Install & Build
+      #   run: |
+      #     npm ci
+      #     npm run build
+
+      - name: FTPS Deploy to Zone
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          # Change to ./dist/ or ./build/ if using a framework
+          local-dir: ./
+          # Directory structure on Zone for subdomains (adjust if your web directory is /htdocs/)
+          server-dir: /subdomains/githubdeploy/htdocs/
